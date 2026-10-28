@@ -12,9 +12,12 @@ let twinkles = [
         vx: 5,
         vy: 5,
 
-        anxiety: 20,
+        anxiety: 0,
         energy: 80,
-        personality: "social"
+        personality: "social",
+        color: "orange",
+
+        isColliding: false
 
     },
     {
@@ -24,9 +27,12 @@ let twinkles = [
         vx: 3,
         vy: 5,
 
-        anxiety: 20,
+        anxiety: 0,
         energy: 80,
-        personality: "sensitive"
+        personality: "sensitive",
+        color: "pink",
+
+        isColliding: false
     },
     {
         name: "Twinkle C",
@@ -35,9 +41,13 @@ let twinkles = [
         vx: 3,
         vy: 7,
 
-        anxiety: 20,
+        anxiety: 0,
         energy: 80,
-        personality: "independent"
+        personality: "independent",
+        color: "blue",
+
+        isColliding: false
+
     },
     {
         name: "Twinkle D",
@@ -46,9 +56,12 @@ let twinkles = [
         vx: 3,
         vy: 4,
 
-        anxiety: 20,
+        anxiety: 0,
         energy: 80,
-        personality: "calm"
+        personality: "calm",
+        color: "black",
+
+        isColliding: false
     },
     {
         name: "Twinkle E",
@@ -57,10 +70,14 @@ let twinkles = [
         vx: 3,
         vy: 2,
 
-        anxiety: 20,
+        anxiety: 0,
         energy: 80,
-        personality: "needs_space"
+        personality: "needs_space",
+        color: "red",
+
+        isColliding: false
     }];
+
 
 
 function animate() {
@@ -74,7 +91,7 @@ function animate() {
         //draw each Twinkle as an circle
         ctx.beginPath();
         ctx.arc(twinkle.x, twinkle.y, 30, 0, 2 * Math.PI);
-        ctx.fillStyle = "orange";
+        ctx.fillStyle = twinkle.color;
         ctx.fill();
 
         //update the Twinkle's position
@@ -100,30 +117,52 @@ function animate() {
                 let twinkleY = twinkles[j]
 
                 //Calculate the horizontal and vertical distance
-                dx = twinkleX.x - twinkleY.x
-                dy = twinkleX.y - twinkleY.y
+                let dx = twinkleX.x - twinkleY.x
+                let dy = twinkleX.y - twinkleY.y
 
                 //calculate the distance between the two Twinkles
-                distance = Math.sqrt(dx * dx + dy * dy)
+                let distance = Math.sqrt(dx * dx + dy * dy)
 
                 //Increase anxiety if collides depends on the different personality
-                if (distance < 60 && twinkleX.personality == "need_space") {
-                    twinkleX.anxiety += 20;
+                // if (distance < 60 && twinkleX.personality == "needs_space") {
+                //     twinkleX.anxiety += 20;
+
+                //     console.log(
+                //         twinkleX.name,
+                //         "collision!",
+                //         twinkleX.anxiety
+                //     );
+
+                if (distance < 60) {
+
+
+                    if (twinkleX.personality === "needs_space") {
+                        twinkleX.anxiety += 20;
+                        twinkleX.vx = -twinkleX.vx;
+                        twinkleX.vy = -twinkleX.vy;
+                    }
+
+                    if (twinkleY.personality === "needs_space") {
+                        twinkleY.anxiety += 20;
+                        twinkleY.vx = -twinkleY.vx;
+                        twinkleY.vy = -twinkleY.vy;
+                    }
 
                     console.log(
-                        twinkleX.name,
-                        "collision!",
-                        twinkleX.anxiety
+                        twinkleX.name, twinkleX.anxiety,
+                        "hit",
+                        twinkleY.name, twinkleY.anxiety,
+
                     );
                 }
             }
-
         }
-
-        //call requestAnimationFrame
-        requestAnimationFrame(animate)
-
     }
+
+
+
+    //call requestAnimationFrame
+    requestAnimationFrame(animate)
 }
 
 animate();
