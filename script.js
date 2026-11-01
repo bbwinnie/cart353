@@ -78,6 +78,7 @@ let twinkles = [
         isColliding: false
     }];
 
+let activeCollisions = new Set();
 
 
 function animate() {
@@ -107,34 +108,60 @@ function animate() {
         if (twinkle.y >= canvas.height - 30 || twinkle.y <= 30) {
             twinkle.vy = -twinkle.vy
         }
+    }
 
-        //compare every pair of Twinkles
-        for (let i = 0; i < twinkles.length; i++) {
-            for (let j = i + 1; j < twinkles.length; j++) {
+    //compare every pair of Twinkles
+    for (let i = 0; i < twinkles.length; i++) {
+        for (let j = i + 1; j < twinkles.length; j++) {
 
-                //get the two Twinklew being compared
-                let twinkleX = twinkles[i]
-                let twinkleY = twinkles[j]
+            //get the two Twinkles being compared
+            let twinkleX = twinkles[i]
+            let twinkleY = twinkles[j]
 
-                //Calculate the horizontal and vertical distance
-                let dx = twinkleX.x - twinkleY.x
-                let dy = twinkleX.y - twinkleY.y
+            //Calculate the horizontal and vertical distance
+            let dx = twinkleX.x - twinkleY.x
+            let dy = twinkleX.y - twinkleY.y
 
-                //calculate the distance between the two Twinkles
-                let distance = Math.sqrt(dx * dx + dy * dy)
+            //calculate the distance between the two Twinkles
+            let distance = Math.sqrt(dx * dx + dy * dy)
 
-                //Increase anxiety if collides depends on the different personality
-                // if (distance < 60 && twinkleX.personality == "needs_space") {
-                //     twinkleX.anxiety += 20;
+            //Increase anxiety if collides depends on the different personality
+            // if (distance < 60 && twinkleX.personality == "needs_space") {
+            //     twinkleX.anxiety += 20;
 
-                //     console.log(
-                //         twinkleX.name,
-                //         "collision!",
-                //         twinkleX.anxiety
-                //     );
+            //     console.log(
+            //         twinkleX.name,
+            //         "collision!",
+            //         twinkleX.anxiety
+            //     );
 
-                if (distance < 60) {
 
+            // if (distance < 60 && twinkleX.personality === "needs_space" && twinkleX.isColliding === false) {
+            //     twinkleX.anxiety += 20;
+            //     twinkleX.vx = -twinkleX.vx;
+            //     twinkleX.vy = -twinkleX.vy;
+            //     twinkleX.isColliding = true;
+            // }
+
+            // if (distance < 60 && twinkleY.personality === "needs_space" && twinkleY.isColliding === false) {
+            //     twinkleY.anxiety += 20;
+            //     twinkleY.vx = -twinkleY.vx;
+            //     twinkleY.vy = -twinkleY.vy;
+            //     twinkleY.isColliding = true;
+            // }
+
+            // if (distance >= 60) {
+            //     twinkleX.isColliding = false;
+            //     twinkleY.isColliding = false;
+            // }
+
+            // Give this pair a unique name
+            let collisionKey = i + "-" + j;
+
+            if (distance < 60) {
+
+                // Only run when this collision starts
+                if (!activeCollisions.has(collisionKey)) {
 
                     if (twinkleX.personality === "needs_space") {
                         twinkleX.anxiety += 20;
@@ -148,21 +175,24 @@ function animate() {
                         twinkleY.vy = -twinkleY.vy;
                     }
 
-                    console.log(
-                        twinkleX.name, twinkleX.anxiety,
-                        "hit",
-                        twinkleY.name, twinkleY.anxiety,
-
-                    );
+                    activeCollisions.add(collisionKey);
                 }
+
+            } else {
+
+                // They separated, so next collision can count again
+                activeCollisions.delete(collisionKey);
             }
+
         }
+
+        console.log(twinkles[4].anxiety);
     }
-
-
 
     //call requestAnimationFrame
     requestAnimationFrame(animate)
+
 }
+
 
 animate();
