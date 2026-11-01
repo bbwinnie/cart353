@@ -16,9 +16,7 @@ let twinkles = [
         energy: 80,
         personality: "social",
         color: "orange",
-
-        isColliding: false
-
+        speedMultiplier: 1
     },
     {
         name: "Twinkle B",
@@ -31,8 +29,8 @@ let twinkles = [
         energy: 80,
         personality: "sensitive",
         color: "pink",
+        speedMultiplier: 1
 
-        isColliding: false
     },
     {
         name: "Twinkle C",
@@ -45,8 +43,7 @@ let twinkles = [
         energy: 80,
         personality: "independent",
         color: "blue",
-
-        isColliding: false
+        speedMultiplier: 1
 
     },
     {
@@ -60,8 +57,7 @@ let twinkles = [
         energy: 80,
         personality: "calm",
         color: "black",
-
-        isColliding: false
+        speedMultiplier: 1
     },
     {
         name: "Twinkle E",
@@ -74,8 +70,7 @@ let twinkles = [
         energy: 80,
         personality: "needs_space",
         color: "red",
-
-        isColliding: false
+        speedMultiplier: 1
     }];
 
 let activeCollisions = new Set();
@@ -89,15 +84,32 @@ function animate() {
     //loop through each Twinkle
     for (let twinkle of twinkles) {
 
+        // Change speed based on anxiety
+        if (twinkle.anxiety < 20) {
+            twinkle.speedMultiplier = 1;
+        } else if (twinkle.anxiety < 40) {
+            twinkle.speedMultiplier = 1.4;
+        } else if (twinkle.anxiety < 60) {
+            twinkle.speedMultiplier = 1.8;
+        } else if (twinkle.anxiety < 80) {
+            twinkle.speedMultiplier = 2.2;
+        } else {
+            twinkle.speedMultiplier = 2.8;
+        }
+
         //draw each Twinkle as an circle
         ctx.beginPath();
         ctx.arc(twinkle.x, twinkle.y, 30, 0, 2 * Math.PI);
         ctx.fillStyle = twinkle.color;
         ctx.fill();
 
-        //update the Twinkle's position
-        twinkle.x += twinkle.vx;
-        twinkle.y += twinkle.vy;
+        // Update position
+        twinkle.x += twinkle.vx * twinkle.speedMultiplier;
+        twinkle.y += twinkle.vy * twinkle.speedMultiplier;
+
+        // //update the Twinkle's position
+        // twinkle.x += twinkle.vx;
+        // twinkle.y += twinkle.vy;
 
         //bounce off the left and right edge
         if (twinkle.x >= canvas.width - 30 || twinkle.x <= 30) {
@@ -125,62 +137,43 @@ function animate() {
             //calculate the distance between the two Twinkles
             let distance = Math.sqrt(dx * dx + dy * dy)
 
-            //Increase anxiety if collides depends on the different personality
-            // if (distance < 60 && twinkleX.personality == "needs_space") {
-            //     twinkleX.anxiety += 20;
-
-            //     console.log(
-            //         twinkleX.name,
-            //         "collision!",
-            //         twinkleX.anxiety
-            //     );
-
-
-            // if (distance < 60 && twinkleX.personality === "needs_space" && twinkleX.isColliding === false) {
-            //     twinkleX.anxiety += 20;
-            //     twinkleX.vx = -twinkleX.vx;
-            //     twinkleX.vy = -twinkleX.vy;
-            //     twinkleX.isColliding = true;
-            // }
-
-            // if (distance < 60 && twinkleY.personality === "needs_space" && twinkleY.isColliding === false) {
-            //     twinkleY.anxiety += 20;
-            //     twinkleY.vx = -twinkleY.vx;
-            //     twinkleY.vy = -twinkleY.vy;
-            //     twinkleY.isColliding = true;
-            // }
-
-            // if (distance >= 60) {
-            //     twinkleX.isColliding = false;
-            //     twinkleY.isColliding = false;
-            // }
-
-            // Give this pair a unique name
+            // record collision pair 
             let collisionKey = i + "-" + j;
 
+            //if collision
             if (distance < 60) {
 
-                // Only run when this collision starts
+                // if the two characters are not in the record
                 if (!activeCollisions.has(collisionKey)) {
 
+                    // also the personality is need_space, adding anxiety level and bounce  
                     if (twinkleX.personality === "needs_space") {
-                        twinkleX.anxiety += 20;
+                        twinkleX.anxiety += 5;
                         twinkleX.vx = -twinkleX.vx;
                         twinkleX.vy = -twinkleX.vy;
+
+                        if (twinkleX.anxiety > 100) {
+                            twinkleX.anxiety = 100;
+                        }
                     }
 
                     if (twinkleY.personality === "needs_space") {
-                        twinkleY.anxiety += 20;
+                        twinkleY.anxiety += 5;
                         twinkleY.vx = -twinkleY.vx;
                         twinkleY.vy = -twinkleY.vy;
+
+                        if (twinkleY.anxiety > 100) {
+                            twinkleY.anxiety = 100;
+                        }
                     }
 
+                    //adding the record
                     activeCollisions.add(collisionKey);
                 }
 
             } else {
 
-                // They separated, so next collision can count again
+                // delete the record
                 activeCollisions.delete(collisionKey);
             }
 
