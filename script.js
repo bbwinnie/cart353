@@ -133,6 +133,7 @@ function animate() {
                 //         twinkleX.anxiety
                 //     );
 
+                //testing the anxiett level colliding system
                 if (distance < 60) {
 
 
