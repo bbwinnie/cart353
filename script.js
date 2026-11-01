@@ -9,8 +9,8 @@ let twinkles = [
         name: "Twinkle A",
         x: 100,
         y: 75,
-        vx: 5,
-        vy: 5,
+        vx: 2,
+        vy: 3,
 
         anxiety: 0,
         energy: 80,
@@ -22,8 +22,8 @@ let twinkles = [
         name: "Twinkle B",
         x: 200,
         y: 150,
-        vx: 3,
-        vy: 5,
+        vx: -3,
+        vy: 2,
 
         anxiety: 0,
         energy: 80,
@@ -36,8 +36,8 @@ let twinkles = [
         name: "Twinkle C",
         x: 240,
         y: 150,
-        vx: 3,
-        vy: 7,
+        vx: 2,
+        vy: -4,
 
         anxiety: 0,
         energy: 80,
@@ -50,8 +50,8 @@ let twinkles = [
         name: "Twinkle D",
         x: 400,
         y: 150,
-        vx: 3,
-        vy: 4,
+        vx: -4,
+        vy: -2,
 
         anxiety: 0,
         energy: 80,
@@ -64,7 +64,7 @@ let twinkles = [
         x: 500,
         y: 150,
         vx: 3,
-        vy: 2,
+        vy: 3,
 
         anxiety: 0,
         energy: 80,
@@ -102,6 +102,27 @@ function animate() {
         ctx.arc(twinkle.x, twinkle.y, 30, 0, 2 * Math.PI);
         ctx.fillStyle = twinkle.color;
         ctx.fill();
+
+        ctx.fillStyle = "white";
+        ctx.font = "20px Arial";
+
+        ctx.fillText(
+            twinkle.name,
+            twinkle.x + 40,
+            twinkle.y
+        )
+
+        ctx.fillText(
+            "Anxiety: " + twinkle.anxiety,
+            twinkle.x + 40,
+            twinkle.y + 25
+        );
+
+        ctx.fillText(
+            "personality:" + twinkle.personality,
+            twinkle.x + 40,
+            twinkle.y + 50
+        );
 
         // Update position
         twinkle.x += twinkle.vx * twinkle.speedMultiplier;
