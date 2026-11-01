@@ -12,7 +12,26 @@
 
     <h1>Twinkle Twinkle</h1>
 
-    <canvas id="gameCanvas"></canvas>
+    <div id="gameContainer">
+
+        <canvas id="gameCanvas"></canvas>
+
+        <div id="themeIntro">
+            <h2 id="themeTitle"></h2>
+            <p id="themeText"></p>
+            <button id="startThemeBtn">Continue</button>
+        </div>
+
+        <div id="themeDisplay">
+            theme:<span id="currentTheme"></span>
+        </div>
+
+        <div id="choiceBox">
+            <h2 id="characterName"> </h2>
+            <div id="choiceContainer"></div>
+        </div>
+
+    </div>
 
     <script src="script.js"></script>
 </body>

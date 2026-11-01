@@ -4,6 +4,31 @@ const ctx = canvas.getContext("2d");
 canvas.width = 1800;
 canvas.height = 1000;
 
+let currentThemeData = {
+    title: "Important Exam",
+    text: "Tomorrow is the final exam",
+}
+
+const themeIntro = document.getElementById("themeIntro");
+const themeTitle = document.getElementById("themeTitle");
+const themeText = document.getElementById("themeText");
+
+const themeDisplay = document.getElementById("themeDisplay");
+const currentTheme = document.getElementById("currentTheme");
+
+const startThemeBtn = document.getElementById("startThemeBtn");
+
+themeTitle.textContent = currentThemeData.title;
+themeText.textContent = currentThemeData.text;
+currentTheme.textContent = currentThemeData.title;
+
+startThemeBtn.addEventListener("click", function () {
+
+    themeIntro.style.display = "none";
+    themeDisplay.style.display = "block";
+})
+
+
 let twinkles = [
     {
         name: "Twinkle A",
@@ -16,7 +41,9 @@ let twinkles = [
         energy: 80,
         personality: "social",
         color: "orange",
-        speedMultiplier: 1
+        speedMultiplier: 1,
+        preparation: 30,
+        socialSupport: 20
     },
     {
         name: "Twinkle B",
@@ -29,7 +56,9 @@ let twinkles = [
         energy: 80,
         personality: "sensitive",
         color: "pink",
-        speedMultiplier: 1
+        speedMultiplier: 1,
+        preparation: 30,
+        socialSupport: 20
 
     },
     {
@@ -43,7 +72,9 @@ let twinkles = [
         energy: 80,
         personality: "independent",
         color: "blue",
-        speedMultiplier: 1
+        speedMultiplier: 1,
+        preparation: 30,
+        socialSupport: 20
 
     },
     {
@@ -57,7 +88,9 @@ let twinkles = [
         energy: 80,
         personality: "calm",
         color: "black",
-        speedMultiplier: 1
+        speedMultiplier: 1,
+        preparation: 30,
+        socialSupport: 20
     },
     {
         name: "Twinkle E",
@@ -70,11 +103,12 @@ let twinkles = [
         energy: 80,
         personality: "needs_space",
         color: "red",
-        speedMultiplier: 1
+        speedMultiplier: 1,
+        preparation: 30,
+        socialSupport: 20
     }];
 
 let activeCollisions = new Set();
-
 
 function animate() {
 
