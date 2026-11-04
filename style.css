@@ -53,5 +53,15 @@ canvas {
 }
 
 #choiceBox {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    background: white;
+    color: black;
+    padding: 30px;
+
     display: none;
+    z-index: 10;
 }

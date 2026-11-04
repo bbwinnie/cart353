@@ -18,12 +18,14 @@ const currentTheme = document.getElementById("currentTheme");
 
 const startThemeBtn = document.getElementById("startThemeBtn");
 
+const choiceBox = document.getElementById("choiceBox");
+const choiceboxCharacter = document.getElementById("characterName");
+
 themeTitle.textContent = currentThemeData.title;
 themeText.textContent = currentThemeData.text;
 currentTheme.textContent = currentThemeData.title;
 
 startThemeBtn.addEventListener("click", function () {
-
     themeIntro.style.display = "none";
     themeDisplay.style.display = "block";
 })
@@ -109,6 +111,35 @@ let twinkles = [
     }];
 
 let activeCollisions = new Set();
+
+let selectedTwinkle = null;
+
+canvas.addEventListener("click", function (event) {
+    let mouseX = event.offsetX;
+    let mouseY = event.offsetY;
+
+
+    for (let twinkle of twinkles) {
+        let dx = twinkle.x - mouseX
+        let dy = twinkle.y - mouseY
+
+        let distance = Math.sqrt(dx * dx + dy * dy)
+
+        if (distance < 50) {
+            selectedTwinkle = twinkle
+            choiceboxCharacter.textContent = selectedTwinkle.name
+            choiceBox.style.display = "block";
+            console.log(twinkle.name)
+        }
+
+
+    }
+
+
+
+})
+
+
 
 function animate() {
 
