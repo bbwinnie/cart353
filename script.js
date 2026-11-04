@@ -1,36 +1,45 @@
+//get the canvas 
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
+//set the canvas size
 canvas.width = 1800;
 canvas.height = 1000;
 
+//store the current theme information
 let currentThemeData = {
     title: "Important Exam",
     text: "Tomorrow is the final exam",
 }
 
+//get the theme introduction elements
 const themeIntro = document.getElementById("themeIntro");
 const themeTitle = document.getElementById("themeTitle");
 const themeText = document.getElementById("themeText");
 
+//get the theme display elements
 const themeDisplay = document.getElementById("themeDisplay");
 const currentTheme = document.getElementById("currentTheme");
 
 const startThemeBtn = document.getElementById("startThemeBtn");
 
+//get the choice box elements
 const choiceBox = document.getElementById("choiceBox");
 const choiceboxCharacter = document.getElementById("characterName");
+const choiceContainer = document.getElementById("choiceContainer");
 
+//display the theme information
 themeTitle.textContent = currentThemeData.title;
 themeText.textContent = currentThemeData.text;
 currentTheme.textContent = currentThemeData.title;
 
+//hide the introduction and show the theme at play stage
 startThemeBtn.addEventListener("click", function () {
     themeIntro.style.display = "none";
     themeDisplay.style.display = "block";
 })
 
-
+//5 Twinkle characters with different personalities and properties 
 let twinkles = [
     {
         name: "Twinkle A",
@@ -88,7 +97,7 @@ let twinkles = [
 
         anxiety: 0,
         energy: 80,
-        personality: "calm",
+        personality: "perfectionist",
         color: "black",
         speedMultiplier: 1,
         preparation: 30,
@@ -110,33 +119,66 @@ let twinkles = [
         socialSupport: 20
     }];
 
+//keep track of active collisions to avoid counting the same collision every frame
 let activeCollisions = new Set();
 
+//store the Twinkle selected by the player
 let selectedTwinkle = null;
 
+//store the event data loaded from the JSON file
+let eventsData = {};
+
+//load the events and coping choices from JSON
+fetch("twinkleEventsChoice.json")
+    .then(response => response.json())
+    .then(data => {
+        eventsData = data;
+        console.log(eventsData);
+    })
+
+//when the player clicks the character
 canvas.addEventListener("click", function (event) {
+
+    //get the mouse position
     let mouseX = event.offsetX;
     let mouseY = event.offsetY;
 
-
+    //check each twinkle to see if it was clicked
     for (let twinkle of twinkles) {
         let dx = twinkle.x - mouseX
         let dy = twinkle.y - mouseY
 
         let distance = Math.sqrt(dx * dx + dy * dy)
 
+        //select the Twinkle if the mouse is close enough
         if (distance < 50) {
+
+            //store the selected Twinkle and display itsname
             selectedTwinkle = twinkle
             choiceboxCharacter.textContent = selectedTwinkle.name
+
+            //find the event that matches the selected Twinkle's personality
+            let currentEvent = eventsData[selectedTwinkle.personality];
+
+            //clear the previous choice buttons
+            choiceContainer.innerHTML = "";
+
+            //create a button for each coping choice
+            for (let choice of currentEvent.choices) {
+                let button = document.createElement("button");
+
+                //display the choice text on the button
+                button.textContent = choice;
+
+                //add button
+                choiceContainer.appendChild(button);
+            }
+
+            //show the choice box
             choiceBox.style.display = "block";
             console.log(twinkle.name)
         }
-
-
     }
-
-
-
 })
 
 

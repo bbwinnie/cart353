@@ -1,0 +1,52 @@
+{
+    "social": {
+        "title": "Feeling Left Out",
+        "text": "Your friends make plans without inviting you.",
+        "choices": [
+            "Ask your friends what happened",
+            "Take a moment to calm down",
+            "Pretend you do not care",
+            "Talk to a trusted friend"
+        ]
+    },
+    "sensitive": {
+        "title": "Noisy Classroom",
+        "text": "The classroom is loud, and you cannot focus.",
+        "choices": [
+            "Move to a quieter seat",
+            "Take a few deep breaths",
+            "Stop working for now",
+            "Ask the teacher for help"
+        ]
+    },
+    "independent": {
+        "title": "Group Project",
+        "text": "A teammate makes all the decisions without asking you.",
+        "choices": [
+            "Explain how you want to contribute",
+            "Take a moment before responding",
+            "Stay quiet and do nothing",
+            "Ask the group to discuss roles"
+        ]
+    },
+    "perfectionist": {
+        "title": "One Small Mistake",
+        "text": "You find one mistake in a project you worked hard on.",
+        "choices": [
+            "Fix the mistake",
+            "Remind yourself that mistakes happen",
+            "Avoid looking at the project",
+            "Ask someone for feedback"
+        ]
+    },
+    "needs_space": {
+        "title": "Crowded Room",
+        "text": "Too many people are standing close to you.",
+        "choices": [
+            "Move to a quiet corner",
+            "Breathe slowly for a moment",
+            "Leave without saying anything",
+            "Ask others to give you some space"
+        ]
+    }
+}
