@@ -48,7 +48,7 @@ let twinkles = [
         vx: 2,
         vy: 3,
 
-        anxiety: 0,
+        anxiety: 30,
         energy: 80,
         personality: "social",
         color: "orange",
@@ -63,7 +63,7 @@ let twinkles = [
         vx: -3,
         vy: 2,
 
-        anxiety: 0,
+        anxiety: 60,
         energy: 80,
         personality: "sensitive",
         color: "pink",
@@ -79,7 +79,7 @@ let twinkles = [
         vx: 2,
         vy: -4,
 
-        anxiety: 0,
+        anxiety: 40,
         energy: 80,
         personality: "independent",
         color: "blue",
@@ -95,7 +95,7 @@ let twinkles = [
         vx: -4,
         vy: -2,
 
-        anxiety: 0,
+        anxiety: 70,
         energy: 80,
         personality: "perfectionist",
         color: "black",
@@ -110,7 +110,7 @@ let twinkles = [
         vx: 3,
         vy: 3,
 
-        anxiety: 0,
+        anxiety: 20,
         energy: 80,
         personality: "needs_space",
         color: "red",
@@ -170,13 +170,19 @@ canvas.addEventListener("click", function (event) {
                 //display the choice text on the button
                 button.textContent = choice;
 
+                button.addEventListener("click", function () {
+                    console.log("player chose:", button.textContent);
+                    console.log("selected Twinkle:", selectedTwinkle.name);
+                    selectedTwinkle.anxiety = Math.max(0, selectedTwinkle.anxiety - 10);
+                })
                 //add button
                 choiceContainer.appendChild(button);
+
+
             }
 
             //show the choice box
             choiceBox.style.display = "block";
-            console.log(twinkle.name)
         }
     }
 })
