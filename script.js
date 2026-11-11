@@ -168,12 +168,15 @@ canvas.addEventListener("click", function (event) {
                 let button = document.createElement("button");
 
                 //display the choice text on the button
-                button.textContent = choice;
+                button.textContent = choice.text;
 
                 button.addEventListener("click", function () {
                     console.log("player chose:", button.textContent);
                     console.log("selected Twinkle:", selectedTwinkle.name);
-                    selectedTwinkle.anxiety = Math.max(0, selectedTwinkle.anxiety - 10);
+                    selectedTwinkle.anxiety = Math.max(
+                        0,
+                        Math.min(100, selectedTwinkle.anxiety + choice.anxietyChange)
+                    );
                 })
                 //add button
                 choiceContainer.appendChild(button);

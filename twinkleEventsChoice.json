@@ -3,50 +3,110 @@
         "title": "Feeling Left Out",
         "text": "Your friends make plans without inviting you.",
         "choices": [
-            "Ask your friends what happened",
-            "Take a moment to calm down",
-            "Pretend you do not care",
-            "Talk to a trusted friend"
+            {
+                "text": "Ask your friends what happened",
+                "anxietyChange": -15
+            },
+            {
+                "text": "Take a moment to calm down",
+                "anxietyChange": -10
+            },
+            {
+                "text": "Pretend you do not care",
+                "anxietyChange": 5
+            },
+            {
+                "text": "Talk to a trusted friend",
+                "anxietyChange": -20
+            }
         ]
     },
     "sensitive": {
         "title": "Noisy Classroom",
         "text": "The classroom is loud, and you cannot focus.",
         "choices": [
-            "Move to a quieter seat",
-            "Take a few deep breaths",
-            "Stop working for now",
-            "Ask the teacher for help"
+            {
+                "text": "Move to a quieter seat",
+                "anxietyChange": -15
+            },
+            {
+                "text": "Take a few deep breaths",
+                "anxietyChange": -10
+            },
+            {
+                "text": "Stop working for now",
+                "anxietyChange": 5
+            },
+            {
+                "text": "Ask the teacher for help",
+                "anxietyChange": -20
+            }
         ]
     },
     "independent": {
         "title": "Group Project",
         "text": "A teammate makes all the decisions without asking you.",
         "choices": [
-            "Explain how you want to contribute",
-            "Take a moment before responding",
-            "Stay quiet and do nothing",
-            "Ask the group to discuss roles"
+            {
+                "text": "Explain how you want to contribute",
+                "anxietyChange": -15
+            },
+            {
+                "text": "Take a moment before responding",
+                "anxietyChange": -10
+            },
+            {
+                "text": "Stay quiet and do nothing",
+                "anxietyChange": 5
+            },
+            {
+                "text": "Ask the group to discuss roles",
+                "anxietyChange": -20
+            }
         ]
     },
     "perfectionist": {
         "title": "One Small Mistake",
         "text": "You find one mistake in a project you worked hard on.",
         "choices": [
-            "Fix the mistake",
-            "Remind yourself that mistakes happen",
-            "Avoid looking at the project",
-            "Ask someone for feedback"
+            {
+                "text": "Fix the mistake",
+                "anxietyChange": -15
+            },
+            {
+                "text": "Remind yourself that mistakes happen",
+                "anxietyChange": -10
+            },
+            {
+                "text": "Avoid looking at the project",
+                "anxietyChange": 5
+            },
+            {
+                "text": "Ask someone for feedback",
+                "anxietyChange": -20
+            }
         ]
     },
     "needs_space": {
         "title": "Crowded Room",
         "text": "Too many people are standing close to you.",
         "choices": [
-            "Move to a quiet corner",
-            "Breathe slowly for a moment",
-            "Leave without saying anything",
-            "Ask others to give you some space"
+            {
+                "text": "Move to a quiet corner",
+                "anxietyChange": -15
+            },
+            {
+                "text": "Breathe slowly for a moment",
+                "anxietyChange": -10
+            },
+            {
+                "text": "Leave without saying anything",
+                "anxietyChange": 5
+            },
+            {
+                "text": "Ask others to give you some space",
+                "anxietyChange": -20
+            }
         ]
     }
 }
