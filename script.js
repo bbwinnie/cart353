@@ -28,6 +28,9 @@ const choiceBox = document.getElementById("choiceBox");
 const choiceboxCharacter = document.getElementById("characterName");
 const choiceContainer = document.getElementById("choiceContainer");
 
+//get the characterBar 
+const characterBar = document.getElementById("characterBar");
+
 //display the theme information
 themeTitle.textContent = currentThemeData.title;
 themeText.textContent = currentThemeData.text;
@@ -119,6 +122,15 @@ let twinkles = [
         socialSupport: 20
     }];
 
+for (let twinkle of twinkles) {
+    let button = document.createElement("button");
+    button.textContent = twinkle.name;
+
+    button.addEventListener("click", function () {
+        openChoiceBox(twinkle);
+    });
+    characterBar.appendChild(button);
+}
 //keep track of active collisions to avoid counting the same collision every frame
 let activeCollisions = new Set();
 
@@ -153,41 +165,15 @@ canvas.addEventListener("click", function (event) {
         //select the Twinkle if the mouse is close enough
         if (distance < 50) {
 
-            //store the selected Twinkle and display itsname
-            selectedTwinkle = twinkle
-            choiceboxCharacter.textContent = selectedTwinkle.name
+            openChoiceBox(twinkle);
+            break;
 
-            //find the event that matches the selected Twinkle's personality
-            let currentEvent = eventsData[selectedTwinkle.personality];
-
-            //clear the previous choice buttons
-            choiceContainer.innerHTML = "";
-
-            //create a button for each coping choice
-            for (let choice of currentEvent.choices) {
-                let button = document.createElement("button");
-
-                //display the choice text on the button
-                button.textContent = choice.text;
-
-                button.addEventListener("click", function () {
-                    console.log("player chose:", button.textContent);
-                    console.log("selected Twinkle:", selectedTwinkle.name);
-                    selectedTwinkle.anxiety = Math.max(
-                        0,
-                        Math.min(100, selectedTwinkle.anxiety + choice.anxietyChange)
-                    );
-                })
-                //add button
-                choiceContainer.appendChild(button);
-
-
-            }
-
-            //show the choice box
-            choiceBox.style.display = "block";
         }
+
+        //show the choice box
+        choiceBox.style.display = "block";
     }
+
 })
 
 
@@ -324,5 +310,40 @@ function animate() {
 
 }
 
+function openChoiceBox(twinkle) {
+    let currentEvent = eventsData[twinkle.personality];
 
+    if (!currentEvent) {
+        return;
+    }
+
+    //store the selected Twinkle and display itsname
+    selectedTwinkle = twinkle;
+    choiceboxCharacter.textContent = selectedTwinkle.name;
+
+    //clear the previous choice buttons
+    choiceContainer.innerHTML = "";
+
+    //create a button for each coping choice
+    for (let choice of currentEvent.choices) {
+        let button = document.createElement("button");
+
+        //display the choice text on the button
+        button.textContent = choice.text;
+
+        button.addEventListener("click", function () {
+            //update anxiety level 
+            twinkle.anxiety = Math.max(0, Math.min(100, twinkle.anxiety + choice.anxietyChange));
+
+            choiceBox.style.display = "none";
+        });
+
+        //add button
+        choiceContainer.appendChild(button);
+
+    }
+
+    choiceBox.style.display = "block";
+
+}
 animate();
