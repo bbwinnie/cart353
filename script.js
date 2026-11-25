@@ -24,6 +24,8 @@ const currentTheme = document.getElementById("currentTheme");
 const startThemeBtn = document.getElementById("startThemeBtn");
 
 //get the choice box elements
+const choiceTitle = document.getElementById("eventTitle");
+const choiceText = document.getElementById("eventText");
 const choiceBox = document.getElementById("choiceBox");
 const choiceboxCharacter = document.getElementById("characterName");
 const choiceContainer = document.getElementById("choiceContainer");
@@ -129,8 +131,10 @@ for (let twinkle of twinkles) {
     button.addEventListener("click", function () {
         openChoiceBox(twinkle);
     });
+
     characterBar.appendChild(button);
 }
+
 //keep track of active collisions to avoid counting the same collision every frame
 let activeCollisions = new Set();
 
@@ -167,11 +171,7 @@ canvas.addEventListener("click", function (event) {
 
             openChoiceBox(twinkle);
             break;
-
         }
-
-        //show the choice box
-        choiceBox.style.display = "block";
     }
 
 })
@@ -302,7 +302,7 @@ function animate() {
 
         }
 
-        console.log(twinkles[4].anxiety);
+        // console.log(twinkles[4].anxiety);
     }
 
     //call requestAnimationFrame
@@ -311,8 +311,11 @@ function animate() {
 }
 
 function openChoiceBox(twinkle) {
+
+    //find the event that matches the personality
     let currentEvent = eventsData[twinkle.personality];
 
+    //make sure the event data is loaded
     if (!currentEvent) {
         return;
     }
@@ -320,6 +323,10 @@ function openChoiceBox(twinkle) {
     //store the selected Twinkle and display itsname
     selectedTwinkle = twinkle;
     choiceboxCharacter.textContent = selectedTwinkle.name;
+
+    //display the event tittle and description
+    choiceTitle.textContent = currentEvent.title;
+    choiceText.textContent = currentEvent.text;
 
     //clear the previous choice buttons
     choiceContainer.innerHTML = "";
