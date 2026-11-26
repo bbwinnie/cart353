@@ -5,6 +5,7 @@ const tileSize = 200;
 const cols = 9;
 const rows = 5;
 
+//set the 16 different position tiles
 let tiles = [
     {
         name: "wall",
@@ -72,14 +73,64 @@ let tiles = [
     }
 ];
 
+//stroe all the cells in the map
+let grid = []
+
+//run all the cell 
+for (let i = 0; i < cols * rows; i++) {
+    //give each cell a collapsed and array
+    let cell = {
+        collapsed: false,
+        options: []
+    };
+
+    //storage all the tiles in to cell.options
+    for (let j = 0; j < tiles.length; j++) {
+        cell.options.push(j)
+    }
+
+    //storge the cell into grid array
+    grid.push(cell);
+}
+
+// console.log(grid[0]);
+console.log(grid.length);
+
+//store the opposite direction of each edge
+//top,right,bottom,left
 const opposite = [2, 3, 0, 1];
 
+//check each tile
+for (let tile of tiles) {
+
+    //create four arrays to store matching tile indexes
+    tile.neighbors = [[], [], [], []];
+
+    //check all four direction of the current tile
+    for (let direction = 0; direction < 4; direction++) {
+        //console.log(tile.name, direction);
+
+        //compare the current tile with every tile in the array
+        for (let i = 0; i < tiles.length; i++) {
+            if (canConnect(tile, tiles[i], direction)) {
+
+                //storge the matching tile index in the correct direction
+                tile.neighbors[direction].push(i);
+            }
+        }
+
+    }
+}
+
+
+
+//check if two tiles have matching edges
 function canConnect(tileA, tileB, direction) {
+
+    //compare the current edge with the opposite edge of the other tile
     if (tileA.edges[direction] === tileB.edges[opposite[direction]]) {
         return true;
     } else {
         return false;
     }
 }
-
-console.log(canConnect(tiles[1], tiles[2], 1))
