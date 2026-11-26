@@ -93,9 +93,6 @@ for (let i = 0; i < cols * rows; i++) {
     grid.push(cell);
 }
 
-// console.log(grid[0]);
-console.log(grid.length);
-
 //store the opposite direction of each edge
 //top,right,bottom,left
 const opposite = [2, 3, 0, 1];
@@ -123,7 +120,6 @@ for (let tile of tiles) {
 }
 
 
-
 //check if two tiles have matching edges
 function canConnect(tileA, tileB, direction) {
 
@@ -134,3 +130,30 @@ function canConnect(tileA, tileB, direction) {
         return false;
     }
 }
+
+//find the min entropy for each grid
+function findMinEntropy() {
+
+    let minOption = tiles.length + 1;
+    let minCells = [];
+
+
+    for (let i = 0; i < grid.length; i++) {
+        if (grid[i].collapsed === false) {
+            if (minOption > grid[i].options.length) {
+                minOption = grid[i].options.length
+                minCells = [];
+                minCells.push(i);
+
+            } else if (minOption === grid[i].options.length) {
+                minCells.push(i);
+            }
+        }
+
+
+    }
+
+    return minCells;
+}
+
+console.log(findMinEntropy());
