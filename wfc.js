@@ -778,6 +778,74 @@ function generateValidMap() {
 
 }
 
+//draw the generated map
+function drawMap(ctx) {
+
+    //stop if the map generation failed
+    if (mapSuccess === false) {
+        return;
+    }
+
+    //draw the map background
+    ctx.fillStyle = "#41454e";
+    ctx.fillRect(0, 0, cols * tileSize, rows * tileSize);
+
+    //set the width of the corridros
+    let roadWidth = tileSize * 0.6;
+
+    //calculate the space on each side of the road
+    let offset = (tileSize - roadWidth) / 2
+
+    //go through all cells in the grds
+    for (let i = 0; i < grid.length; i++) {
+
+        //get the position of the current cell
+        let x = (i % cols) * tileSize;
+        let y = Math.floor(i / cols) * tileSize;
+
+        //get the selected tile
+        let tileIndex = grid[i].options[0];
+        let tile = tiles[tileIndex];
+
+        //skip wall tiles
+        if (tileIndex === 0) {
+            continue;
+        }
+
+        //set the road color
+        ctx.fillStyle = "#e5dfd0";
+
+        //draw the center of the road
+        ctx.fillRect(
+            x + offset,
+            y + offset,
+            roadWidth,
+            roadWidth
+        );
+
+        // Draw the top connection
+        if (tile.edges[0] === 1) {
+            ctx.fillRect(x + offset, y, roadWidth, offset);
+        }
+
+        // Draw the right connection
+        if (tile.edges[1] === 1) {
+            ctx.fillRect(x + offset + roadWidth, y + offset, offset, roadWidth);
+        }
+
+        // Draw the bottom connection
+        if (tile.edges[2] === 1) {
+            ctx.fillRect(x + offset, y + offset + roadWidth, roadWidth, offset);
+        }
+
+        // Draw the left connection
+        if (tile.edges[3] === 1) {
+            ctx.fillRect(x, y + offset, offset, roadWidth);
+        }
+
+    }
+}
+
 let mapSuccess = generateValidMap();
 
 console.log("Map success:", mapSuccess);

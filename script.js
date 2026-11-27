@@ -182,6 +182,7 @@ function animate() {
 
     //clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawMap(ctx);
 
     //loop through each Twinkle
     for (let twinkle of twinkles) {
