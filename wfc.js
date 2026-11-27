@@ -131,21 +131,37 @@ function canConnect(tileA, tileB, direction) {
     }
 }
 
-//find the min entropy for each grid
+//find all the uncollapsed cells with the fewest possible tiles
 function findMinEntropy() {
 
+    //set the initial minimum value higher than all possible option counts
     let minOption = tiles.length + 1;
+
+    //store the indexes of cells with the minimum number of options
     let minCells = [];
 
-
+    //go through all the cells in the grid
     for (let i = 0; i < grid.length; i++) {
+
+        //only check the cells that have not been collapsed
         if (grid[i].collapsed === false) {
+
+            //check if the current cell has fewer options
             if (minOption > grid[i].options.length) {
+
+                //update the minmun number of options
                 minOption = grid[i].options.length
+
+                //clear the previously stored cell indexes
                 minCells = [];
+
+                //store the current cell index
                 minCells.push(i);
 
+                //check if the current cell has the same minimum number of options
             } else if (minOption === grid[i].options.length) {
+
+                //adding the cell index without clearing the array
                 minCells.push(i);
             }
         }
@@ -153,7 +169,48 @@ function findMinEntropy() {
 
     }
 
+    // return all cell indexes with the minimum number of options
     return minCells;
 }
 
-console.log(findMinEntropy());
+//randomly select a cell and collapse it into one tile
+function collapse() {
+
+    //get the indexes of cells with the fewest options
+    let minEntropy = findMinEntropy();
+
+    //stop if all cells has been collapsed
+    if (minEntropy.length === 0) {
+        return;
+    }
+
+    //generate a random index form the minimum entropy array
+    let randomIndex = Math.floor(Math.random() * minEntropy.length);
+
+    //get the index of the selected cell
+    let selectedCellIndex = minEntropy[randomIndex];
+
+    //get the selected cell object from the grid
+    let selectedCell = grid[selectedCellIndex];
+
+    //generate a random index from the cell's available otions
+    let randomTileIndex = Math.floor(Math.random() * selectedCell.options.length);
+
+    //get the selected tile index 
+    let selectedTile = selectedCell.options[randomTileIndex];
+
+    //check if the selected cell has no available tiles
+    if (selectedCell.options.length === 0) {
+        console.log("Contradiction");
+        return;
+    }
+
+    //mark the selected cell as collapsed
+    selectedCell.collapsed = true;
+
+    //replace all possible options with the selected tile
+    selectedCell.options = [selectedTile];
+
+    return selectedCellIndex;
+}
+
