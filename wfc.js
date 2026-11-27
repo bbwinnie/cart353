@@ -510,6 +510,52 @@ function generateRooms() {
         { col: 0, row: 4, width: 5, height: 3 },
         { col: 7, row: 4, width: 5, height: 3 }
     ];
+
+    for (let area of areas) {
+        //randomly select a room type
+        let randomTypeIndex = Math.floor(Math.random() * roomTypes.length);
+
+        let roomType = roomTypes[randomTypeIndex];
+
+        //remove the slected room type
+        roomTypes.splice(randomTypeIndex, 1);
+
+        //randomly select the room direction
+        let roomWidth = 3;
+        let roomHeight = 2;
+
+        if (Math.random() < 0.5) {
+            roomWidth = 2;
+            roomHeight = 3;
+        }
+
+        //randomly select a position inside the area
+        let startCol = area.col + Math.floor(Math.random() * (area.width - roomWidth + 1));
+
+        let startRow = area.row + Math.floor(Math.random() * (area.height - roomHeight + 1));
+
+        let roomCells = [];
+
+        for (let y = 0; y < roomHeight; y++) {
+            for (let x = 0; x < roomWidth; x++) {
+                let cellIndex = (startRow + y) * cols + (startCol + x);
+
+                roomCells.push(cellIndex);
+            }
+        }
+
+        //store the room information
+        mapRooms.push({
+            type: roomType,
+            col: startCol,
+            row: startRow,
+            width: roomWidth,
+            height: roomHeight,
+            cells: roomCells
+        })
+    }
+
+
 }
 
 //generate a valid and connected map
@@ -544,8 +590,13 @@ function generateValidMap() {
 
 }
 
-// Generate the final map
-let mapSuccess = generateValidMap();
+// // Generate the final map
+// let mapSuccess = generateValidMap();
 
-console.log("Map success:", mapSuccess);
-console.log(grid);
+// console.log("Map success:", mapSuccess);
+// console.log(grid);
+
+initializeGrid();
+generateRooms();
+
+console.table(mapRooms);
