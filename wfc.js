@@ -221,33 +221,36 @@ function propagate(cellIndex) {
     let queue = [cellIndex]
 
     while (queue.length > 0) {
+
+        //get the first cell index from the queue
         let currentIndex = queue.shift();
 
-        let currentCell = grid[cellIndex];
+        //get the current cell object
+        let currentCell = grid[currentIndex];
 
         //store the indexes of the four neighboring cells
-        let neighborIndexs = [cellIndex - cols, cellIndex + 1, cellIndex + cols, cellIndex - 1];
+        let neighborIndexs = [currentIndex - cols, currentIndex + 1, currentIndex + cols, currentIndex - 1];
 
-        //top
-        if (cellIndex < cols) {
+        //top boundary
+        if (currentIndex < cols) {
             neighborIndexs[0] = null;
         }
 
-        //right
-        if (cellIndex % cols === cols - 1) {
+        //right boundary
+        if (currentIndex % cols === cols - 1) {
             neighborIndexs[1] = null;
         }
 
-        //bottom
-        if (cellIndex >= cols * (rows - 1)) {
+        //bottom boundary
+        if (currentIndex >= cols * (rows - 1)) {
             neighborIndexs[2] = null;
         }
 
-        //left
-        if (cellIndex % cols === 0) {
+        //left boundary
+        if (currentIndex % cols === 0) {
             neighborIndexs[3] = null;
         }
-        console.log(cellIndex);
+        console.log(currentIndex);
 
         console.log(neighborIndexs);
 
@@ -260,22 +263,51 @@ function propagate(cellIndex) {
                 let neighborIndex = neighborIndexs[i];
                 let neighborCell = grid[neighborIndex];
 
-                let currentTileIndex = currentCell.options[0];
-                let currentTile = tiles[currentTileIndex];
-                let allowedTiles = currentTile.neighbors[i];
+                //store all allowed tile indexes
+                let allowedTiles = [];
+
+                //check all possible tilew of the current cell
+                for (let currentTileIndex of currentCell.options) {
+                    let currentTile = tiles[currentTileIndex];
+
+                    //get the matching tiles in the current direction
+                    let matchingTiles = currentTile.neighbors[i];
+
+                    //combine all matching tiles
+                    for (let matchingTile of matchingTiles) {
+
+                        //avoid adding duplicate tile indexes 
+                        if (!allowedTiles.includes(matchingTile)) {
+                            allowedTiles.push(matchingTile);
+                        }
+                    }
+                }
+
+                //store the filtered options
                 let newOptions = [];
 
+                //compare the allowed tiles with the existing options
                 for (let j = 0; j < allowedTiles.length; j++) {
+
                     for (let k = 0; k < neighborCell.options.length; k++) {
+
                         if (allowedTiles[j] === neighborCell.options[k]) {
                             newOptions.push(neighborCell.options[k]);
                         }
                     }
                 }
 
+                //check if the number of options has decreased
                 if (newOptions.length < neighborCell.options.length) {
+
                     //update the available options
                     neighborCell.options = newOptions
+
+                    //stop if there are no available tiles
+                    if (newOptions.length === 0) {
+                        console.log("contradiction");
+                        return false;
+                    }
 
                     //add the changed cell index to the queue
                     queue.push(neighborIndex)
@@ -284,6 +316,9 @@ function propagate(cellIndex) {
         }
     }
 
+    //propagation completed successfully
+    return true;
+
 }
 
 
@@ -291,5 +326,8 @@ function propagate(cellIndex) {
 //call collapse and store the selected cell index
 let cellIndex = collapse();
 
-//pass the selected cell index to propagate
-propagate(cellIndex);
+if (cellIndex !== undefined) {
+    console.log(propagate(cellIndex));
+}
+
+console.log(grid);
