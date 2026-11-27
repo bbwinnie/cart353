@@ -214,3 +214,82 @@ function collapse() {
     return selectedCellIndex;
 }
 
+//propagate constraints
+function propagate(cellIndex) {
+
+    //store the cells that need to be checked
+    let queue = [cellIndex]
+
+    while (queue.length > 0) {
+        let currentIndex = queue.shift();
+
+        let currentCell = grid[cellIndex];
+
+        //store the indexes of the four neighboring cells
+        let neighborIndexs = [cellIndex - cols, cellIndex + 1, cellIndex + cols, cellIndex - 1];
+
+        //top
+        if (cellIndex < cols) {
+            neighborIndexs[0] = null;
+        }
+
+        //right
+        if (cellIndex % cols === cols - 1) {
+            neighborIndexs[1] = null;
+        }
+
+        //bottom
+        if (cellIndex >= cols * (rows - 1)) {
+            neighborIndexs[2] = null;
+        }
+
+        //left
+        if (cellIndex % cols === 0) {
+            neighborIndexs[3] = null;
+        }
+        console.log(cellIndex);
+
+        console.log(neighborIndexs);
+
+        //go through all four directions
+        for (let i = 0; i < neighborIndexs.length; i++) {
+
+            //only check existing neighbors
+            if (neighborIndexs[i] !== null) {
+
+                let neighborIndex = neighborIndexs[i];
+                let neighborCell = grid[neighborIndex];
+
+                let currentTileIndex = currentCell.options[0];
+                let currentTile = tiles[currentTileIndex];
+                let allowedTiles = currentTile.neighbors[i];
+                let newOptions = [];
+
+                for (let j = 0; j < allowedTiles.length; j++) {
+                    for (let k = 0; k < neighborCell.options.length; k++) {
+                        if (allowedTiles[j] === neighborCell.options[k]) {
+                            newOptions.push(neighborCell.options[k]);
+                        }
+                    }
+                }
+
+                if (newOptions.length < neighborCell.options.length) {
+                    //update the available options
+                    neighborCell.options = newOptions
+
+                    //add the changed cell index to the queue
+                    queue.push(neighborIndex)
+                }
+            }
+        }
+    }
+
+}
+
+
+
+//call collapse and store the selected cell index
+let cellIndex = collapse();
+
+//pass the selected cell index to propagate
+propagate(cellIndex);
