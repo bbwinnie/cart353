@@ -558,6 +558,77 @@ function generateRooms() {
 
 }
 
+//apply constraints to all rooms
+function applyRoomConstraints() {
+    for (let room of mapRooms) {
+
+        // store all possible entrances
+        let entrances = [];
+
+        for (let cellIndex of room.cells) {
+
+            let neighborIndexs = getNeighborIndexes(cellIndex);
+
+            for (let i = 0; i < neighborIndexs.length; i++) {
+
+                let neighborIndex = neighborIndexs[i];
+
+                //find neighbors outside the room
+                if (neighborIndex !== null && !room.cells.includes(neighborIndex)) {
+
+                    entrances.push({
+                        cellIndex: cellIndex,
+                        direction: i,
+                        neighborIndex: neighborIndex
+                    });
+                }
+            }
+        }
+
+        //randomly select one entrance
+        let randomIndex = Math.floor(Math.random() * entrances.length);
+
+        room.entrance = entrances[randomIndex];
+
+        //set the edges of each room cell
+        for (let cellIndex of room.cells) {
+
+            let neighborIndexs = getNeighborIndexes(cellIndex);
+
+            let roomEdges = [0, 0, 0, 0];
+
+            for (let i = 0; i < neighborIndexs.length; i++) {
+
+                //open edges inside the same room
+                if (room.cells.includes(neighborIndexs[i])) {
+                    roomEdges[i] = 1
+                }
+
+                //open the room entrance
+                if (cellIndex === room.entrance.cellIndex && i === room.entrance.direction) {
+                    roomEdges[i] = 1;
+
+                }
+            }
+
+            //find the tile with matching edges
+            let newOptions = [];
+
+            for (let tileIndex of grid[cellIndex].options) {
+                let tile = tiles[tileIndex];
+
+                if (tile.edges[0] === roomEdges[0] && tile.edges[1] === roomEdges[1] && tile.edges[2] === roomEdges[2] && tile.edges[3] === roomEdges[3]) {
+                    newOptions.push(tileIndex);
+                }
+            }
+
+            //update the room cell options
+            grid[cellIndex].options = newOptions;
+        }
+
+    }
+}
+
 //generate a valid and connected map
 function generateValidMap() {
 
@@ -590,13 +661,22 @@ function generateValidMap() {
 
 }
 
-// // Generate the final map
-// let mapSuccess = generateValidMap();
-
-// console.log("Map success:", mapSuccess);
-// console.log(grid);
-
 initializeGrid();
+
 generateRooms();
 
-console.table(mapRooms);
+applyBoundaryConstraints();
+
+applyRoomConstraints();
+
+console.log(mapRooms);
+console.log(grid);
+
+// Check room cell options
+for (let room of mapRooms) {
+
+    for (let cellIndex of room.cells) {
+
+        console.log(cellIndex, grid[cellIndex].options);
+    }
+}
