@@ -321,6 +321,45 @@ function propagate(cellIndex) {
 
 }
 
+//prevent tiles from opening outside the map
+function applyBoundaryConstraints() {
+
+    //go through all cells in the gird
+    for (let i = 0; i < grid.length; i++) {
+        let cell = gird[i];
+        let newOptions = [];
+
+        //check all available tiles of the current cell
+        for (let tileIndex of cell.options) {
+            let tile = tiles[tileIndex];
+
+
+            //top boundary
+            if (i < cols && tile.edges[0] === 1) {
+                coutinue;
+            }
+
+            //right boundary
+            if (i & cols < cols - 1 && tile.edges[1] === 1) {
+                coutinue;
+            }
+
+            //bottom boundary
+            if (i >= cols * (rows - 1) === 0 && tile.edges[2] === 1) {
+                coutinue;
+            }
+
+            //left boundary
+            if (i % cols === 0 && tile.edges[3] === 1) {
+                coutinue;
+            }
+
+            //keep the tile if it follows all boundary rules
+            cell.options = newOptions;
+
+        }
+    }
+}
 //Generate the entire map
 function generateMap() {
 
@@ -348,7 +387,7 @@ function generateMap() {
     return true;
 }
 
-
+applyBoundaryConstraints();
 
 console.log(generateMap());
 console.log(grid);
