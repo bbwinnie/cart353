@@ -3,8 +3,8 @@ const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
 //set the canvas size
-canvas.width = 1800;
-canvas.height = 1000;
+canvas.width = cols * tileSize;
+canvas.height = rows * tileSize;
 
 //store the current theme information
 let currentThemeData = {

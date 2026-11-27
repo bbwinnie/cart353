@@ -1,9 +1,9 @@
 //set the tile size
-const tileSize = 200;
+const tileSize = 150;
 
 //set the grid size
-const cols = 9;
-const rows = 5;
+const cols = 12;
+const rows = 7;
 
 //set the 16 different position tiles
 let tiles = [
@@ -74,7 +74,10 @@ let tiles = [
 ];
 
 //stroe all the cells in the map
-let grid = []
+let grid = [];
+
+//store all rooms in the map
+let mapRooms = [];
 
 //initialize all cells in the grid
 function initializeGrid() {
@@ -491,6 +494,24 @@ function checkMapConnectivity() {
 
 }
 
+//randomly generate four rooms
+function generateRooms() {
+
+    //clear previous rooms
+    mapRooms.length = 0;
+
+    //store the four room types
+    let roomTypes = ["study", "work", "social", "rest"];
+
+    //define four room areas
+    let areas = [
+        { col: 0, row: 0, width: 5, height: 3 },
+        { col: 7, row: 0, width: 5, height: 3 },
+        { col: 0, row: 4, width: 5, height: 3 },
+        { col: 7, row: 4, width: 5, height: 3 }
+    ];
+}
+
 //generate a valid and connected map
 function generateValidMap() {
 
@@ -520,8 +541,6 @@ function generateValidMap() {
     console.log("failed to generate a valid map");
 
     return false;
-
-
 
 }
 
