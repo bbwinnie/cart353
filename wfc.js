@@ -321,13 +321,34 @@ function propagate(cellIndex) {
 
 }
 
+//Generate the entire map
+function generateMap() {
 
+    // keep generating until all cells are collapsed
+    while (findMinEntropy().length > 0) {
 
-//call collapse and store the selected cell index
-let cellIndex = collapse();
+        //call collapse and store the selected cell index
+        let cellIndex = collapse();
 
-if (cellIndex !== undefined) {
-    console.log(propagate(cellIndex));
+        //stop if the collapse fails
+        if (cellIndex === undefined) {
+            return false;
+        }
+
+        //propagate constraints from the collapsed cell
+        let success = propagate(cellIndex);
+
+        //stop if propagteion fails
+        if (success === false) {
+            return false;
+        }
+    }
+
+    //the map has been successfully generated
+    return true;
 }
 
+
+
+console.log(generateMap());
 console.log(grid);
