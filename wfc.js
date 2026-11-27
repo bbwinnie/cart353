@@ -654,7 +654,10 @@ function applyPathConstraints() {
     //store all room cell indexes
     let roomCells = [];
 
+    //go through each room
     for (let room of mapRooms) {
+
+        //get all cell indexes inside the current room
         for (let cellIndex of room.cells) {
             roomCells.push(cellIndex);
         }
@@ -669,18 +672,25 @@ function applyPathConstraints() {
     //calculate the number of corridor cells
     let corridorCount = grid.length - roomCells.length;
 
+    //keep expanding the spanning tree until all corridor cells are included
     while (visited.length < corridorCount) {
         //store possible connections
         let candidates = [];
 
+        //go through all cells already included in the spanning tree
         for (let cellIndex of visited) {
+
+            //get the four neighboring cell indexes
             let neighborIndexs = getNeighborIndexes(cellIndex);
 
-            for (let i = 0; i < neighborIndexs; i++) {
+            //check each direction
+            for (let i = 0; i < neighborIndexs.length; i++) {
                 let neighborIndex = neighborIndexs[i];
 
+                //make sure the neighbor is inside the map, does not belong to a room, and has not been visited yet
                 if (neighborIndex !== null && !roomCells.includes(neighborIndex) && !visited.includes(neighborIndex)) {
 
+                    //store the current cell
                     candidates.push({
                         cellIndex: cellIndex,
                         direction: i,
@@ -689,7 +699,33 @@ function applyPathConstraints() {
                 }
             }
         }
+
+        //stop if no connection is possible
+        if (candidates.length === 0) {
+            return false;
+        }
+
+        //randomly select a connection 
+        let randomIndex = Math.floor(Math.random() * candidates.length);
+
+        let connection = candidates[randomIndex];
+
+        //require open edges on both sides
+        if (!requireOpenEdge(connection.cellIndex, connection.direction) || !requireOpenEdge(connection.neighborIndex, opposite[connection.direction])) {
+            return false;
+        }
+
+        //add the new corridor cell
+        visited.push(connection.neighborIndex);
     }
+
+    //connect each room entrance to the corridors
+    for (let room of mapRooms) {
+        if (!requireOpenEdge(room.entrance.neighborIndex, opposite[room.entrance.direction])) {
+            return false;
+        }
+    }
+    return true;
 }
 
 //generate a valid and connected map
@@ -703,43 +739,56 @@ function generateValidMap() {
         //reset the grid
         initializeGrid();
 
-        //apply boundary constraints
+        //generate four rooms
+        generateRooms();
+
+        //apply boundary and room constraints 
         applyBoundaryConstraints();
+        applyRoomConstraints();
+
+        //generate the spanning tree
+        if (applyPathConstraints() === false) {
+            continue;
+        }
 
         //generate a new map
         let success = generateMap();
 
-        //check if the map is connected
-        if (success === true && checkMapConnectivity() === true) {
-            console.log("valid map generated!");
-            console.log("attempts:", attempt + 1);
+        //only check connectivity if wfc generation is successful
+        if (success === true) {
 
-            return true;
+            //find all reachable cells starting from the first room
+            let connectedCells = getConnectedCells(mapRooms[0].cells[0]);
+
+            //check if all grid cells are reachable and the entire map is connected
+            if (connectedCells.length === grid.length && checkMapConnectivity() === true) {
+
+                //display the successful generation result
+                console.log("valid map generated")
+                console.log("attempts:", attempt + 1);
+
+                return true;
+            }
         }
     }
+
     //stop if no valid map can be generated
     console.log("failed to generate a valid map");
-
     return false;
 
 }
 
-initializeGrid();
+let mapSuccess = generateValidMap();
 
-generateRooms();
+console.log("Map success:", mapSuccess);
 
-applyBoundaryConstraints();
+if (mapSuccess === true) {
 
-applyRoomConstraints();
+    console.table(mapRooms);
 
-console.log(mapRooms);
-console.log(grid);
+    let connectedCells = getConnectedCells(mapRooms[0].cells[0]);
 
-// Check room cell options
-for (let room of mapRooms) {
+    console.log("Connected cells:", connectedCells.length);
 
-    for (let cellIndex of room.cells) {
-
-        console.log(cellIndex, grid[cellIndex].options);
-    }
+    console.log("Total cells:", grid.length);
 }
