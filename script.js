@@ -184,6 +184,9 @@ function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawMap(ctx);
 
+    // draw the rooms on top of the map
+    drawRooms(ctx);
+
     //loop through each Twinkle
     for (let twinkle of twinkles) {
 

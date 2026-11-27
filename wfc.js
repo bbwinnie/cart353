@@ -823,26 +823,111 @@ function drawMap(ctx) {
             roadWidth
         );
 
-        // Draw the top connection
+        // draw the top connection
         if (tile.edges[0] === 1) {
             ctx.fillRect(x + offset, y, roadWidth, offset);
         }
 
-        // Draw the right connection
+        // draw the right connection
         if (tile.edges[1] === 1) {
             ctx.fillRect(x + offset + roadWidth, y + offset, offset, roadWidth);
         }
 
-        // Draw the bottom connection
+        // draw the bottom connection
         if (tile.edges[2] === 1) {
             ctx.fillRect(x + offset, y + offset + roadWidth, roadWidth, offset);
         }
 
-        // Draw the left connection
+        // draw the left connection
         if (tile.edges[3] === 1) {
             ctx.fillRect(x, y + offset, offset, roadWidth);
         }
 
+    }
+}
+
+//draw all four rooms
+function drawRooms(ctx) {
+
+    //stop if the map generation failed
+    if (mapSuccess === false) {
+        return;
+    }
+
+    //set a different color for each room
+    let roomColors = {
+        study: "black",
+        work: "white",
+        social: "pink",
+        rest: "green"
+    };
+
+    ctx.save();
+
+    //go through all rooms
+    for (let room of mapRooms) {
+        //calculate the room position
+        let x = room.col * tileSize;
+        let y = room.row * tileSize;
+
+        //calculate the room size
+        let width = room.width * tileSize;
+        let height = room.height * tileSize;
+
+        //draw the room walls
+        ctx.strokeStyle = "#41454e";
+        ctx.lineWidth = 6;
+        ctx.strokeRect(x, y, width, height);
+
+        // draw the room floor
+        ctx.fillStyle = roomColors[room.type];
+        ctx.fillRect(x, y, width, height);
+
+        // draw the room name
+        ctx.fillStyle = "#41454e";
+        ctx.font = "28px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        ctx.fillText(
+            room.type.toUpperCase(),
+            x + width / 2,
+            y + height / 2
+        )
+        ctx.restore();
+
+        // get the entrance cell position
+        let entrance = room.entrance;
+
+        let doorX = (entrance.cellIndex % cols) * tileSize;
+        let doorY = Math.floor(entrance.cellIndex / cols) * tileSize;
+
+        // match the corridor width
+        let roadWidth = tileSize * 0.6;
+        let offset = (tileSize - roadWidth) / 2;
+
+        // set the entrance color
+        ctx.fillStyle = "#e5dfd0";
+
+        // top entrance
+        if (entrance.direction === 0) {
+            ctx.fillRect(doorX + offset, doorY - 4, roadWidth, 8);
+        }
+
+        // right entrance
+        if (entrance.direction === 1) {
+            ctx.fillRect(doorX + tileSize - 4, doorY + offset, 8, roadWidth);
+        }
+
+        // bottom entrance
+        if (entrance.direction === 2) {
+            ctx.fillRect(doorX + offset, doorY + tileSize - 4, roadWidth, 8);
+        }
+
+        // left entrance
+        if (entrance.direction === 3) {
+            ctx.fillRect(doorX - 4, doorY + offset, 8, roadWidth);
+        }
     }
 }
 
