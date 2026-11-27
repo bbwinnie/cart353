@@ -76,21 +76,27 @@ let tiles = [
 //stroe all the cells in the map
 let grid = []
 
-//run all the cell 
-for (let i = 0; i < cols * rows; i++) {
-    //give each cell a collapsed and array
-    let cell = {
-        collapsed: false,
-        options: []
-    };
+//initialize all cells in the grid
+function initializeGrid() {
+    //clear the previous grid 
+    grid.length = 0;
 
-    //storage all the tiles in to cell.options
-    for (let j = 0; j < tiles.length; j++) {
-        cell.options.push(j)
+    //run all the cell 
+    for (let i = 0; i < cols * rows; i++) {
+        //give each cell a collapsed and array
+        let cell = {
+            collapsed: false,
+            options: []
+        };
+
+        //storage all the tiles in to cell.options
+        for (let j = 0; j < tiles.length; j++) {
+            cell.options.push(j)
+        }
+
+        //storge the cell into grid array
+        grid.push(cell);
     }
-
-    //storge the cell into grid array
-    grid.push(cell);
 }
 
 //store the opposite direction of each edge
@@ -345,12 +351,12 @@ function applyBoundaryConstraints() {
             }
 
             //right boundary
-            if (i & cols < cols - 1 && tile.edges[1] === 1) {
+            if (i % cols === cols - 1 && tile.edges[1] === 1) {
                 continue;
             }
 
             //bottom boundary
-            if (i >= cols * (rows - 1) === 0 && tile.edges[2] === 1) {
+            if (i >= cols * (rows - 1) && tile.edges[2] === 1) {
                 continue;
             }
 
@@ -485,18 +491,42 @@ function checkMapConnectivity() {
 
 }
 
-// Apply boundary constraints
-applyBoundaryConstraints();
+//generate a valid and connected map
+function generateValidMap() {
 
-console.log("Corner:", grid[0].options);
-console.log("Boundary:", grid[1].options);
-console.log("Center:", grid[22].options);
-// Generate the map
-let mapSuccess = generateMap();
+    //Set the maximum number of attempts
+    let maxAttempts = 200;
 
-console.log("Map generated:", mapSuccess);
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
 
-// Check map connectivity
-if (mapSuccess === true) {
-    console.log("Map connected:", checkMapConnectivity());
+        //reset the grid
+        initializeGrid();
+
+        //apply boundary constraints
+        applyBoundaryConstraints();
+
+        //generate a new map
+        let success = generateMap();
+
+        //check if the map is connected
+        if (success === true && checkMapConnectivity() === true) {
+            console.log("valid map generated!");
+            console.log("attempts:", attempt + 1);
+
+            return true;
+        }
+    }
+    //stop if no valid map can be generated
+    console.log("failed to generate a valid map");
+
+    return false;
+
+
+
 }
+
+// Generate the final map
+let mapSuccess = generateValidMap();
+
+console.log("Map success:", mapSuccess);
+console.log(grid);
