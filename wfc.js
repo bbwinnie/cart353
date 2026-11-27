@@ -201,7 +201,8 @@ function collapse() {
 
     //check if the selected cell has no available tiles
     if (selectedCell.options.length === 0) {
-        console.log("Contradiction");
+        console.log("Contradiction at cell:", selectedCellIndex);
+        console.log(selectedCell);
         return;
     }
 
@@ -212,6 +213,33 @@ function collapse() {
     selectedCell.options = [selectedTile];
 
     return selectedCellIndex;
+}
+
+function getNeighborIndexes(cellIndex) {
+    //store the indexes of the four neighboring cells
+    let neighborIndexs = [cellIndex - cols, cellIndex + 1, cellIndex + cols, cellIndex - 1];
+
+    //top boundary
+    if (cellIndex < cols) {
+        neighborIndexs[0] = null;
+    }
+
+    //right boundary
+    if (cellIndex % cols === cols - 1) {
+        neighborIndexs[1] = null;
+    }
+
+    //bottom boundary
+    if (cellIndex >= cols * (rows - 1)) {
+        neighborIndexs[2] = null;
+    }
+
+    //left boundary
+    if (cellIndex % cols === 0) {
+        neighborIndexs[3] = null;
+    }
+
+    return neighborIndexs;
 }
 
 //propagate constraints
@@ -228,31 +256,7 @@ function propagate(cellIndex) {
         //get the current cell object
         let currentCell = grid[currentIndex];
 
-        //store the indexes of the four neighboring cells
-        let neighborIndexs = [currentIndex - cols, currentIndex + 1, currentIndex + cols, currentIndex - 1];
-
-        //top boundary
-        if (currentIndex < cols) {
-            neighborIndexs[0] = null;
-        }
-
-        //right boundary
-        if (currentIndex % cols === cols - 1) {
-            neighborIndexs[1] = null;
-        }
-
-        //bottom boundary
-        if (currentIndex >= cols * (rows - 1)) {
-            neighborIndexs[2] = null;
-        }
-
-        //left boundary
-        if (currentIndex % cols === 0) {
-            neighborIndexs[3] = null;
-        }
-        console.log(currentIndex);
-
-        console.log(neighborIndexs);
+        let neighborIndexs = getNeighborIndexes(currentIndex);
 
         //go through all four directions
         for (let i = 0; i < neighborIndexs.length; i++) {
@@ -326,7 +330,8 @@ function applyBoundaryConstraints() {
 
     //go through all cells in the gird
     for (let i = 0; i < grid.length; i++) {
-        let cell = gird[i];
+
+        let cell = grid[i];
         let newOptions = [];
 
         //check all available tiles of the current cell
@@ -336,28 +341,32 @@ function applyBoundaryConstraints() {
 
             //top boundary
             if (i < cols && tile.edges[0] === 1) {
-                coutinue;
+                continue;
             }
 
             //right boundary
             if (i & cols < cols - 1 && tile.edges[1] === 1) {
-                coutinue;
+                continue;
             }
 
             //bottom boundary
             if (i >= cols * (rows - 1) === 0 && tile.edges[2] === 1) {
-                coutinue;
+                continue;
             }
 
             //left boundary
             if (i % cols === 0 && tile.edges[3] === 1) {
-                coutinue;
+                continue;
             }
 
-            //keep the tile if it follows all boundary rules
-            cell.options = newOptions;
+            // Keep the valid tile
+            newOptions.push(tileIndex);
 
         }
+
+        // Update the options after checking all tiles
+        cell.options = newOptions;
+
     }
 }
 //Generate the entire map
@@ -387,7 +396,107 @@ function generateMap() {
     return true;
 }
 
+//find the neighboring cells that can be reached
+function getOpenNeighbors(cellIndex) {
+
+    //get the current cell and its tile
+    let cell = grid[cellIndex];
+    let tileIndex = cell.options[0];
+    let tile = tiles[tileIndex];
+
+    //get the indexes of the four neighboring cells
+    let neighborIndexs = getNeighborIndexes(cellIndex);
+
+    //store all reachabel neighbors
+    let openNeighbors = [];
+
+    for (let i = 0; i < neighborIndexs.length; i++) {
+
+        //check if the neighbor exists and the edge is open
+        if (neighborIndexs[i] !== null && tile.edges[i] === 1) {
+
+            openNeighbors.push(neighborIndexs[i]);
+        }
+    }
+
+    return openNeighbors;
+}
+
+//find all cells connected to the starting cell
+function getConnectedCells(startIndex) {
+
+    //store the cells that need to be checked
+    let queue = [startIndex];
+
+    //store the cells that have already been visited
+    let visited = [startIndex];
+
+    while (queue.length > 0) {
+        //get the current cell index 
+        let currentIndex = queue.shift();
+
+        //get all reachabel neighbors
+        let openNeighbors = getOpenNeighbors(currentIndex);
+
+        //check each reachable neighbor
+        for (let neighborIndex of openNeighbors) {
+            //only visit cells that have not been checked
+            if (!visited.includes(neighborIndex)) {
+                visited.push(neighborIndex);
+                queue.push(neighborIndex);
+            }
+        }
+    }
+
+    return visited;
+}
+
+// Check if all walkable cells are connected
+function checkMapConnectivity() {
+
+    //store all walkable cell indexes
+    let walkableCells = [];
+
+    for (let i = 0; i < grid.length; i++) {
+        let tileIndex = grid[i].options[0];
+
+        let tile = tiles[tileIndex];
+
+        //a walkable tile must have a least one open edge
+        if (tile.edges.includes(1)) {
+            walkableCells.push(i)
+        }
+    }
+
+    //make sure there are enough cells for four rooms
+    if (walkableCells.length < 4) {
+        return false
+    }
+
+    //find all connected cells from the first walkable cell
+    let connectedCells = getConnectedCells(walkableCells[0]);
+
+    //check if all walkable cells can be reached
+    if (connectedCells.length === walkableCells.length) {
+        return true;
+    } else {
+        return false;
+    }
+
+}
+
+// Apply boundary constraints
 applyBoundaryConstraints();
 
-console.log(generateMap());
-console.log(grid);
+console.log("Corner:", grid[0].options);
+console.log("Boundary:", grid[1].options);
+console.log("Center:", grid[22].options);
+// Generate the map
+let mapSuccess = generateMap();
+
+console.log("Map generated:", mapSuccess);
+
+// Check map connectivity
+if (mapSuccess === true) {
+    console.log("Map connected:", checkMapConnectivity());
+}
