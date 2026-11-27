@@ -629,6 +629,69 @@ function applyRoomConstraints() {
     }
 }
 
+//keep tiles with an open edeg in the required direction
+function requireOpenEdge(cellIndex, direction) {
+    let cell = grid[cellIndex];
+
+    let newOptions = [];
+
+    for (let tileIndex of cell.options) {
+        let tile = tiles[tileIndex];
+
+        if (tile.edges[direction] === 1) {
+            newOptions.push(tileIndex);
+        }
+    }
+
+    cell.options = newOptions;
+
+    return newOptions.length > 0;
+}
+
+//Gnerate a connected path structure
+function applyPathConstraints() {
+
+    //store all room cell indexes
+    let roomCells = [];
+
+    for (let room of mapRooms) {
+        for (let cellIndex of room.cells) {
+            roomCells.push(cellIndex);
+        }
+    }
+
+    //start from the corridor outside the first room
+    let startIndex = mapRooms[0].entrance.neighborIndex;
+
+    //store all connected corridor cells
+    let visited = [startIndex];
+
+    //calculate the number of corridor cells
+    let corridorCount = grid.length - roomCells.length;
+
+    while (visited.length < corridorCount) {
+        //store possible connections
+        let candidates = [];
+
+        for (let cellIndex of visited) {
+            let neighborIndexs = getNeighborIndexes(cellIndex);
+
+            for (let i = 0; i < neighborIndexs; i++) {
+                let neighborIndex = neighborIndexs[i];
+
+                if (neighborIndex !== null && !roomCells.includes(neighborIndex) && !visited.includes(neighborIndex)) {
+
+                    candidates.push({
+                        cellIndex: cellIndex,
+                        direction: i,
+                        neighborIndex: neighborIndex
+                    });
+                }
+            }
+        }
+    }
+}
+
 //generate a valid and connected map
 function generateValidMap() {
 
