@@ -243,6 +243,49 @@ function initializeTwinkles() {
     }
 }
 
+//move a twinkle along its path
+function moveTwinkle(twinkle) {
+
+    //stop if there is no path or the destionation is reached
+    if (twinkle.pathIndex >= twinkle.path.length) {
+        return;
+    }
+
+    //get the next cell index from the path
+    let targetCell = twinkle.path[twinkle.pathIndex];
+
+    //get the center position of the target cell
+    let target = getCellCenter(targetCell);
+
+    //calculate the distanve between the Twinkle and the target
+    let dx = target.x - twinkle.x;
+    let dy = target.y - twinkle.y;
+
+    let distance = Math.sqrt(dx * dx + dy * dy);
+
+    //calculate movement speed based on anxiety
+    let speed = twinkle.baseSpeed * twinkle.speedMultiplier;
+
+    //check if the twinkle can reach the target in this frame
+    if (distance <= speed) {
+
+        //set the exact position of the target
+        twinkle.x = target.x;
+        twinkle.y = target.y;
+
+        //update the current cell
+        twinkle.currentCell = targetCell;
+
+        //move to the next cell in the path
+        twinkle.pathIndex++;
+    } else {
+        //move towards the target
+        twinkle.x += (dx / distance) * speed;
+        twinkle.y += (dy / distance) * speed;
+
+    }
+}
+
 function animate() {
 
     //clear canvas
@@ -295,9 +338,8 @@ function animate() {
             twinkle.y + 50
         );
 
-        // // Update position
-        // twinkle.x += twinkle.vx * twinkle.speedMultiplier;
-        // twinkle.y += twinkle.vy * twinkle.speedMultiplier;
+        //move the twinkle along its bfs path
+        moveTwinkle(twinkle);
 
         // //update the Twinkle's position
         // twinkle.x += twinkle.vx;
@@ -427,6 +469,25 @@ function openChoiceBox(twinkle) {
 if (mapSuccess === true) {
 
     initializeTwinkles();
+
+    //assign a temporary path to each twinkle
+    for (let twinkle of twinkles) {
+
+        //randomly select a target room
+        let randomIndex = Math.floor(Math.random() * mapRooms.length);
+
+        let targetRoom = mapRooms[randomIndex];
+
+        //select a cell inside the target room
+        let targetCell = targetRoom.cells[0];
+
+        //generate the shortest path
+        twinkle.path = findPath(twinkle.currentCell, targetCell);
+
+        //skip the starting cell
+        twinkle.pathIndex = 1;
+
+    }
 
     animate();
 }
