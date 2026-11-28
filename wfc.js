@@ -460,6 +460,79 @@ function getConnectedCells(startIndex) {
     return visited;
 }
 
+//find the shortest path bewtween two cells using BFS
+function findPath(startIndex, targetIndex) {
+
+    //store the cells that need to be checked
+    let queue = [startIndex];
+
+    //store the cells that have already been visited
+    let visited = [startIndex];
+
+    //store the previous cell of each visited cell
+    let previous = {};
+
+    //keep searching while there are cells in the queue
+    while (queue.length > 0) {
+        //get the current cell index
+        let currentIndex = queue.shift();
+
+        //stop searching when the target is found
+        if (currentIndex === targetIndex) {
+            break;
+        }
+
+        //get all reachable neighboring cells
+        let openNeighbors = getOpenNeighbors(currentIndex);
+
+        //check each neighboring cell
+        for (let neighborIndex of openNeighbors) {
+
+            //only visit new cells
+            if (!visited.includes(neighborIndex)) {
+
+                //mark the neighbor as visited
+                visited.push(neighborIndex);
+
+                //add the neighbor to the queue
+                queue.push(neighborIndex);
+
+                //record where the neighbor came from
+                previous[neighborIndex] = currentIndex;
+            }
+        }
+    }
+
+    //check if the target cell was reached
+    if (!visited.includes(targetIndex)) {
+        return [];
+    }
+
+    //store the patch from the target to the starting cell
+    let path = [];
+
+    //start reconstructing the path from the target cell
+    let currentIndex = targetIndex
+
+    //follow the previous cells until reaching the starting cell
+    while (currentIndex !== startIndex) {
+        //add the current cell to the path
+        path.push(currentIndex);
+
+        //move back to the previous cell
+        currentIndex = previous[currentIndex];
+    }
+
+    //add the starting cell to the path
+    path.push(startIndex);
+
+    //reverse the path from start to target
+    path.reverse();
+
+    //return the complete path
+    return path;
+}
+
 // Check if all walkable cells are connected
 function checkMapConnectivity() {
 
@@ -931,17 +1004,13 @@ function drawRooms(ctx) {
     }
 }
 
+// Generate the map when the page loads
 let mapSuccess = generateValidMap();
 
-console.log("Map success:", mapSuccess);
-
+// Test BFS pathfinding
 if (mapSuccess === true) {
 
-    console.table(mapRooms);
+    let testPath = findPath(0, 83);
 
-    let connectedCells = getConnectedCells(mapRooms[0].cells[0]);
-
-    console.log("Connected cells:", connectedCells.length);
-
-    console.log("Total cells:", grid.length);
+    console.log("BFS Path:", testPath);
 }
