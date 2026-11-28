@@ -533,6 +533,21 @@ function findPath(startIndex, targetIndex) {
     return path;
 }
 
+//convert a cell index into ites center position
+function getCellCenter(cellIndex) {
+
+    let col = cellIndex % cols;
+    let row = Math.floor(cellIndex / cols);
+
+    let x = col * tileSize + tileSize / 2;
+    let y = row * tileSize + tileSize / 2
+
+    return {
+        x: x,
+        y: y
+    }
+
+}
 // Check if all walkable cells are connected
 function checkMapConnectivity() {
 

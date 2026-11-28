@@ -59,7 +59,11 @@ let twinkles = [
         color: "orange",
         speedMultiplier: 1,
         preparation: 30,
-        socialSupport: 20
+        socialSupport: 20,
+        currentCell: null,
+        path: [],
+        pathIndex: 0,
+        baseSpeed: 2,
     },
     {
         name: "Twinkle B",
@@ -74,7 +78,11 @@ let twinkles = [
         color: "pink",
         speedMultiplier: 1,
         preparation: 30,
-        socialSupport: 20
+        socialSupport: 20,
+        currentCell: null,
+        path: [],
+        pathIndex: 0,
+        baseSpeed: 2,
 
     },
     {
@@ -90,7 +98,11 @@ let twinkles = [
         color: "blue",
         speedMultiplier: 1,
         preparation: 30,
-        socialSupport: 20
+        socialSupport: 20,
+        currentCell: null,
+        path: [],
+        pathIndex: 0,
+        baseSpeed: 2,
 
     },
     {
@@ -106,7 +118,11 @@ let twinkles = [
         color: "black",
         speedMultiplier: 1,
         preparation: 30,
-        socialSupport: 20
+        socialSupport: 20,
+        currentCell: null,
+        path: [],
+        pathIndex: 0,
+        baseSpeed: 2,
     },
     {
         name: "Twinkle E",
@@ -121,7 +137,11 @@ let twinkles = [
         color: "red",
         speedMultiplier: 1,
         preparation: 30,
-        socialSupport: 20
+        socialSupport: 20,
+        currentCell: null,
+        path: [],
+        pathIndex: 0,
+        baseSpeed: 2,
     }];
 
 for (let twinkle of twinkles) {
@@ -176,7 +196,52 @@ canvas.addEventListener("click", function (event) {
 
 })
 
+//set random starting positions for all twinkles
+function initializeTwinkles() {
 
+    //store all possible starting cells
+    let availableCells = [];
+
+    //find all corridor cells
+    for (let i = 0; i < grid.length; i++) {
+
+        let isRoom = false;
+
+        //check if the cell belongs to a room
+        for (let room of mapRooms) {
+            if (room.cells.includes(i)) {
+                isRoom = true;
+                break;
+            }
+        }
+
+        //only use corridor cell
+        if (isRoom === false) {
+            availableCells.push(i);
+        }
+    }
+
+    //assign a random starting cell to each twinkle
+    for (let twinkle of twinkles) {
+
+        let randomIndex = Math.floor(Math.random() * availableCells.length);
+
+        let cellIndex = availableCells[randomIndex];
+
+        //store the current cell index
+        twinkle.currentCell = cellIndex;
+
+        //get the center position of the cell
+        let position = getCellCenter(cellIndex);
+
+        //update the character position
+        twinkle.x = position.x;
+        twinkle.y = position.y;
+
+        //remove the selected cell to avoid overlapping
+        availableCells.splice(randomIndex, 1);
+    }
+}
 
 function animate() {
 
@@ -230,9 +295,9 @@ function animate() {
             twinkle.y + 50
         );
 
-        // Update position
-        twinkle.x += twinkle.vx * twinkle.speedMultiplier;
-        twinkle.y += twinkle.vy * twinkle.speedMultiplier;
+        // // Update position
+        // twinkle.x += twinkle.vx * twinkle.speedMultiplier;
+        // twinkle.y += twinkle.vy * twinkle.speedMultiplier;
 
         // //update the Twinkle's position
         // twinkle.x += twinkle.vx;
@@ -357,4 +422,11 @@ function openChoiceBox(twinkle) {
     choiceBox.style.display = "block";
 
 }
-animate();
+
+//initialize the character after the map is generated
+if (mapSuccess === true) {
+
+    initializeTwinkles();
+
+    animate();
+}
