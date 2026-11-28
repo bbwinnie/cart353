@@ -47,101 +47,159 @@ startThemeBtn.addEventListener("click", function () {
 //5 Twinkle characters with different personalities and properties 
 let twinkles = [
     {
+        //basic information
         name: "Twinkle A",
-        x: 100,
-        y: 75,
-        vx: 2,
-        vy: 3,
-
-        anxiety: 30,
-        energy: 80,
         personality: "social",
         color: "orange",
-        speedMultiplier: 1,
+
+        //emotion properties
+        anxiety: 30,
+        energy: 80,
         preparation: 30,
         socialSupport: 20,
+
+        //movement properties
+        x: 100,
+        y: 75,
+        baseSpeed: 2,
+        speedMultiplier: 1,
+
+        //pathfinding properties
         currentCell: null,
         path: [],
         pathIndex: 0,
-        baseSpeed: 2,
+
+        //room behavior properties
+        state: "walking",
+        currentRoom: null,
+        targetRoom: null,
+        arrivalTime: 0,
+        stayDuration: 15000,
+
     },
     {
+        //basic information
         name: "Twinkle B",
-        x: 200,
-        y: 150,
-        vx: -3,
-        vy: 2,
-
-        anxiety: 60,
-        energy: 80,
         personality: "sensitive",
         color: "pink",
-        speedMultiplier: 1,
+
+        //emotion properties
+        anxiety: 60,
+        energy: 80,
         preparation: 30,
         socialSupport: 20,
+
+        //movement properties
+        x: 200,
+        y: 150,
+        baseSpeed: 2,
+        speedMultiplier: 1,
+
+        //pathfinding properties
         currentCell: null,
         path: [],
         pathIndex: 0,
-        baseSpeed: 2,
+
+        //room behavior properties
+        state: "walking",
+        currentRoom: null,
+        targetRoom: null,
+        arrivalTime: 0,
+        stayDuration: 15000,
 
     },
     {
+        //basic information
         name: "Twinkle C",
-        x: 240,
-        y: 150,
-        vx: 2,
-        vy: -4,
-
-        anxiety: 40,
-        energy: 80,
         personality: "independent",
         color: "blue",
-        speedMultiplier: 1,
+
+        //emotion properties
+        anxiety: 40,
+        energy: 80,
         preparation: 30,
         socialSupport: 20,
+
+        //movement properties
+        x: 240,
+        y: 150,
+        baseSpeed: 2,
+        speedMultiplier: 1,
+
+        //pathfinding properties
         currentCell: null,
         path: [],
         pathIndex: 0,
-        baseSpeed: 2,
+
+        //room behavior properties
+        state: "walking",
+        currentRoom: null,
+        targetRoom: null,
+        arrivalTime: 0,
+        stayDuration: 15000,
 
     },
     {
+        //basic information
         name: "Twinkle D",
-        x: 400,
-        y: 150,
-        vx: -4,
-        vy: -2,
-
-        anxiety: 70,
-        energy: 80,
         personality: "perfectionist",
         color: "black",
-        speedMultiplier: 1,
+
+        //emotion properties
+        anxiety: 70,
+        energy: 80,
         preparation: 30,
         socialSupport: 20,
+
+        //movement properties
+        x: 400,
+        y: 150,
+        baseSpeed: 2,
+        speedMultiplier: 1,
+
+        //pathfinding properties
         currentCell: null,
         path: [],
         pathIndex: 0,
-        baseSpeed: 2,
+
+        //room behavior properties
+        state: "walking",
+        currentRoom: null,
+        targetRoom: null,
+        arrivalTime: 0,
+        stayDuration: 15000,
+
     },
     {
-        name: "Twinkle E",
-        x: 500,
-        y: 150,
-        vx: 3,
-        vy: 3,
 
-        anxiety: 20,
-        energy: 80,
+        //basic information
+        name: "Twinkle E",
         personality: "needs_space",
         color: "red",
-        speedMultiplier: 1,
+
+        //emotion properties
+        anxiety: 20,
+        energy: 80,
         preparation: 30,
         socialSupport: 20,
+
+        //movement properties
+        x: 500,
+        y: 150,
+        baseSpeed: 2,
+        speedMultiplier: 1,
+
+        //pathfinding properties
         currentCell: null,
         path: [],
         pathIndex: 0,
-        baseSpeed: 2,
+
+        //room behavior properties
+        state: "walking",
+        currentRoom: null,
+        targetRoom: null,
+        arrivalTime: 0,
+        stayDuration: 15000,
     }];
 
 for (let twinkle of twinkles) {
@@ -243,6 +301,47 @@ function initializeTwinkles() {
     }
 }
 
+//choose a new destination fro the twinkle
+function chooseNextRoom(twinkle) {
+
+    //store available rooms
+    let availableRooms = [];
+
+    //exclude the current room
+    for (let room of mapRooms) {
+
+        if (room !== twinkle.currentRoom) {
+            availableRooms.push(room);
+        }
+    }
+
+    //randomly select a room
+    let randomIndex = Math.floor(
+        Math.random() * availableRooms.length
+    );
+
+    let targetRoom = availableRooms[randomIndex];
+
+    //store the target room
+    twinkle.targetRoom = targetRoom;
+
+    //select a random cell inside the room
+    let cellIndex = Math.floor(
+        Math.random() * targetRoom.cells.length
+    );
+
+    let targetCell = targetRoom.cells[cellIndex];
+
+    //generate the shortest path
+    twinkle.path = findPath(twinkle.currentCell, targetCell);
+
+    //skip the starting cell
+    twinkle.pathIndex = 1;
+
+    //update the character state
+    twinkle.state = "walking";
+}
+
 //move a twinkle along its path
 function moveTwinkle(twinkle) {
 
@@ -340,20 +439,6 @@ function animate() {
 
         //move the twinkle along its bfs path
         moveTwinkle(twinkle);
-
-        // //update the Twinkle's position
-        // twinkle.x += twinkle.vx;
-        // twinkle.y += twinkle.vy;
-
-        //bounce off the left and right edge
-        if (twinkle.x >= canvas.width - 30 || twinkle.x <= 30) {
-            twinkle.vx = -twinkle.vx
-        }
-
-        //bounce off the bottom and top edge
-        if (twinkle.y >= canvas.height - 30 || twinkle.y <= 30) {
-            twinkle.vy = -twinkle.vy
-        }
     }
 
     //compare every pair of Twinkles
@@ -383,8 +468,7 @@ function animate() {
                     // also the personality is need_space, adding anxiety level and bounce  
                     if (twinkleX.personality === "needs_space") {
                         twinkleX.anxiety += 5;
-                        twinkleX.vx = -twinkleX.vx;
-                        twinkleX.vy = -twinkleX.vy;
+
 
                         if (twinkleX.anxiety > 100) {
                             twinkleX.anxiety = 100;
@@ -393,8 +477,7 @@ function animate() {
 
                     if (twinkleY.personality === "needs_space") {
                         twinkleY.anxiety += 5;
-                        twinkleY.vx = -twinkleY.vx;
-                        twinkleY.vy = -twinkleY.vy;
+
 
                         if (twinkleY.anxiety > 100) {
                             twinkleY.anxiety = 100;
@@ -473,19 +556,7 @@ if (mapSuccess === true) {
     //assign a temporary path to each twinkle
     for (let twinkle of twinkles) {
 
-        //randomly select a target room
-        let randomIndex = Math.floor(Math.random() * mapRooms.length);
-
-        let targetRoom = mapRooms[randomIndex];
-
-        //select a cell inside the target room
-        let targetCell = targetRoom.cells[0];
-
-        //generate the shortest path
-        twinkle.path = findPath(twinkle.currentCell, targetCell);
-
-        //skip the starting cell
-        twinkle.pathIndex = 1;
+        chooseNextRoom(twinkle);
 
     }
 
